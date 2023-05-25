@@ -21,7 +21,7 @@
         </h4>
       </div>
       <div class="card-body">
-        <table class='table table-bordered'>
+        <table class='table'>
           <thead>
             <tr>
               <th class="pe-auto text-center" @click="sortColumn('name')">
@@ -44,7 +44,8 @@
                 Website
                 <SvgIcon />
               </th>
-              <th class="text-center">Actions</th>
+              <th class="text-center">Edit</th>
+              <th class="text-center">Delete</th>
             </tr>
           </thead>
           <tbody v-if="paginatedUsers.length > 0">
@@ -55,11 +56,13 @@
               <td>{{ user.phone }}</td>
               <td>{{ user.website }}</td>
               <td>
-                <RouterLink :to="{ path: `/table/${user._id}/edit` }" class='btn btn-success'>
-                  Edit
+                <RouterLink :to="{ path: `/table/${user._id}/edit` }" class='btn btn-action'>
+                  <IconEdit />
                 </RouterLink>
-                <button type='button' @click="deleteUser(user._id)" class='btn btn-danger float-end'>
-                  Delete
+              </td>
+              <td>
+                <button type='button' @click="deleteUser(user._id)" class='btn btn-action'>
+                  <IconDelete />
                 </button>
               </td>
             </tr>
@@ -94,12 +97,32 @@
   </div>
 </template>
 
+<style scoped>
+.btn-action {
+  background-color: #FFD741;
+  width: 35px;
+  height: 35px;
+  border-radius: 35px;
+  box-shadow: 0px 2px 2px gray;
+}
+
+.btn-action > svg {
+  width: 16px;
+  bottom: 3px;
+  right: 3px;
+  position: relative;
+}
+</style>
+
 <script>
 import axios from 'axios';
 import SvgIcon from '../Icons/SortArrows.vue';
+import IconEdit from '../Icons/IconEdit.vue';
+import IconDelete from '../Icons/IconDelete.vue';
+
 export default {
   name: 'users',
-  components: { SvgIcon },
+  components: { SvgIcon, IconDelete, IconEdit },
   data() {
     return {
       users: [],
@@ -145,7 +168,6 @@ export default {
     deleteUser(userId) {
       if (confirm('Are you sure, you want to delete this data ?')) {
         axios.delete(`http://localhost:3000/users/${userId}`).then(res => {
-          alert(res.data.message);
           this.getUsers();
         })
           .catch((error) => {

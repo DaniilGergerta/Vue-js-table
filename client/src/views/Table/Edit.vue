@@ -7,7 +7,7 @@
       <div class="card-body">
         <ul class="alert alert-warning" v-if="Object.keys(this.errorList).length > 0">
           <li class="mb-0 ms-3" v-for="(error, index) in this.errorList" :key="index">
-            {{ error[0] }}
+            {{ error[ 0 ] }}
           </li>
         </ul>
         <div class="mb-3">
@@ -60,7 +60,7 @@ export default {
       }
     }
   },
-  mounted(){
+  mounted() {
     this.userId = this.$route.params.id;
     this.getUserData(this.$route.params.id);
   },
@@ -71,25 +71,24 @@ export default {
         this.model.user = res.data
       })
     },
-    updateUser(){
+    updateUser() {
       var myThis = this
       console.log(this.userId);
       axios.put(`http://localhost:3000/users/${this.userId}`, this.model.user).then(res => {
-        console.log(res);
-        alert(res.data.message)
+        alert("Done")
 
         this.errorList = '';
       })
-      .catch((error) => {
-        if (error.response) {
-          if (error.response.status = 422) {
-            myThis.errorList = error.response.data;
+        .catch((error) => {
+          if (error.response) {
+            if (error.response.status = 422) {
+              myThis.errorList = error.response.data;
+            }
+            if (error.response.status === 404) {
+              alert(error.response.data.message)
+            }
           }
-          if (error.response.status === 404) {
-            alert(error.response.data.message)
-          }
-        }
-      })
+        })
     }
   }
 }

@@ -7,7 +7,7 @@
       <div class="card-body">
         <ul class="alert alert-warning" v-if="Object.keys(this.errorList).length > 0">
           <li class="mb-0 ms-3" v-for="(error, index) in this.errorList" :key="index">
-            {{ error[0] }}
+            {{ error[ 0 ] }}
           </li>
         </ul>
         <div class="mb-3">
@@ -60,11 +60,10 @@ export default {
     }
   },
   methods: {
-    saveUser(){
+    saveUser() {
       var myThis = this
       axios.post('http://localhost:3000/users', this.model.user).then(res => {
-        console.log(res);
-        alert(res.data.message)
+        alert("Done")
 
         this.model.user = {
           name: '',
@@ -76,20 +75,20 @@ export default {
 
         this.errorList = '';
       })
-      .catch((error) => {
-        if (error.response) {
-          if (error.response.status === 422) {
-            myThis.errorList = error.response.data;
+        .catch((error) => {
+          if (error.response) {
+            if (error.response.status === 422) {
+              myThis.errorList = error.response.data;
+            }
+            // console.log('Error', error.response.data)
+            // console.log('Error', error.response.status)
+            // console.log('Error', error.response.headers)
+          } else if (error.request) {
+            console.log('Error', error.request)
+          } else {
+            console.log('Error', error.message)
           }
-          // console.log('Error', error.response.data)
-          // console.log('Error', error.response.status)
-          // console.log('Error', error.response.headers)
-        } else if (error.request) {
-          console.log('Error', error.request)
-        } else {
-          console.log('Error', error.message)
-        }
-      })
+        })
     }
   }
 }
