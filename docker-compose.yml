@@ -1,28 +1,6 @@
 version: '3.1'
 
 services:
-  news-app:
-    image: node:14-slim
-    container_name: news-app
-    restart: always
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    user: "node"
-    working_dir: /usr/src/app/server
-    environment:
-      - DB_URL=mongodb://mongo-db
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    depends_on:
-      - mongodb
-    networks:
-      - backend
-    command: "npm start"
-
   mongodb:
     image: mongo
     container_name: mongo-db
@@ -33,18 +11,43 @@ services:
       - "27017:27017"
     networks:
       - backend
-
+  news-app:
+    container_name: news-app
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    user: "node"
+    working_dir: /server
+    environment:
+      - DB_URL=mongodb://mongo-db
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+    command: "npm start"
   client:
-   working_dir: /client
-   ports:
-     - "5173:5173"
-   build:
-     context: ./client
-     dockerfile: Dockerfile
-   stdin_open: true
+    container_name: client
+    working_dir: /usr/src/app/client
+    depends_on:
+      - news-app
+    user: "node"
+    ports:
+      - "5173:5173"
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    stdin_open: true
+    volumes:
+      - ./client:/usr/src/app/client
+      - /usr/src/app/client/node_modules
+    networks:
+      - backend
 
 volumes:
-  mongodata: 
-  
+  mongodata:
+
+
 networks:
   backend:

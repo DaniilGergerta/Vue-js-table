@@ -1,16 +1,21 @@
-FROM node:14-alpine
+FROM node:alpine
 
-WORKDIR /usr/src/app/server
+RUN apk add g++ make py3-pip
+RUN npm i -g npm
+RUN npm i -g fs json-server @nestjs/cli
 
-RUN chown -R node:node /usr/src/app/server
+WORKDIR /server
+
+RUN chown -R node:node /server
+
+COPY --chown=node:node package.json ./
+
+RUN npm install --omit=optional
+
+COPY --chown=node:node . ./
 
 USER node
 
-COPY --chown=node:node package*.json ./
-
-RUN npm install
-COPY --chown=node:node . ./
-
 EXPOSE 3000
 
-CMD [ "npm", "start" ]
+ENTRYPOINT [ "npm", "start" ]
