@@ -3,8 +3,8 @@ FROM node:alpine
 RUN apk add --no-cache libc6-compat
 RUN npm i -g npm
 
-WORKDIR /usr/src/app/client
-RUN chown -R node:node /usr/src/app/client
+WORKDIR /client
+RUN chown -R node:node /client
 
 COPY --chown=node:node package.json .
 

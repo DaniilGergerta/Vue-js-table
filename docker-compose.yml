@@ -9,10 +9,8 @@ services:
       - mongodata:/data/db
     ports:
       - "27017:27017"
-    networks:
-      - backend
-  news-app:
-    container_name: news-app
+  server:
+    container_name: server
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -24,30 +22,22 @@ services:
       - DB_URL=mongodb://mongo-db
     depends_on:
       - mongodb
-    networks:
-      - backend
     command: "npm start"
   client:
     container_name: client
-    working_dir: /usr/src/app/client
-    depends_on:
-      - news-app
-    user: "node"
-    ports:
-      - "5173:5173"
     build:
       context: ./client
       dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    user: "node"
+    working_dir: /client
+    depends_on:
+      - server
     stdin_open: true
     volumes:
-      - ./client:/usr/src/app/client
-      - /usr/src/app/client/node_modules
-    networks:
-      - backend
+      - ./client:/client
+      - /client/node_modules
 
 volumes:
   mongodata:
-
-
-networks:
-  backend:
